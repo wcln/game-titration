@@ -13,6 +13,8 @@ canvas {
 	left: 0;
 	right: 0;
 	margin: auto;
+	width: 510px;
+	height: 600px;
 }
 
 /* mute button */

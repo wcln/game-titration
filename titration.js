@@ -19,6 +19,15 @@ var buretLiquid, flaskLiquid, indicatorLiquid;
 
 var buretDispensing = false;
 var buretLiquidY = 30;
+var flaskCounter = 1; // used to make flask level increase faster as it gets skinnier
+
+var liquidFalling;
+var liquidFallingOriginalX = 413;
+var liquidFallingOriginalY = 455;
+var liquidFallingHeight = 1;
+
+var flaskLiquidOriginalY = 880;
+
 
 function init() {
  	STAGE_WIDTH = parseInt(document.getElementById("gameCanvas").getAttribute("width"));
@@ -37,13 +46,35 @@ function init() {
 
 function update(event) {
  	if (gameStarted) {
- 		if (buretDispensing) {
+ 		if (buretDispensing && buretLiquidY < 450) {
+
+ 			if (liquidFalling !== null) {
+ 				stage.removeChild(liquidFalling);
+ 			}
+
+ 			// decrease buret level
  			buretLiquidY++;
  			var oldIndex = stage.getChildIndex(buretLiquid);
  			stage.removeChild(buretLiquid);
  			buretLiquid = new createjs.Shape();
  			buretLiquid.graphics.beginFill("blue").drawRect(375, buretLiquidY, 100, 450 - buretLiquidY);
  			stage.addChildAt(buretLiquid, oldIndex);
+
+ 			// increase flask level
+ 			flaskLiquid.y -= 0.3 * flaskCounter;
+ 			flaskCounter += 0.003;
+
+ 			// draw line of liquid falling
+ 			if (liquidFallingHeight < (flaskLiquid.y + flaskLiquidOriginalY) - liquidFallingOriginalY) {
+	 			liquidFallingHeight += 50;
+
+ 			} else { // it has hit the water in the flask
+ 				liquidFallingHeight = (flaskLiquid.y + flaskLiquidOriginalY) - liquidFallingOriginalY;
+ 			}
+
+			liquidFalling = new createjs.Shape();
+ 			liquidFalling.graphics.beginFill("blue").drawRect(liquidFallingOriginalX, liquidFallingOriginalY, 4, liquidFallingHeight);
+ 			stage.addChildAt(liquidFalling, stage.getChildIndex(flaskLiquid));	
  		}
 	}
 
@@ -60,6 +91,20 @@ function initGraphics() {
 	buretLiquid = new createjs.Shape();
 	buretLiquid.graphics.beginFill("blue").drawRect(380, 30, 90, 425);
 	stage.addChild(buretLiquid);
+
+	flaskLiquid = new createjs.Shape();
+	flaskLiquid.graphics.beginFill("red").drawRect(280, flaskLiquidOriginalY, 265, 500);
+	stage.addChild(flaskLiquid);
+
+	indicatorLiquid = new createjs.Shape();
+	indicatorLiquid.graphics.beginFill("green").drawRect(0, 0, 30, 150);
+	indicatorLiquid.regX = 15;
+	indicatorLiquid.regY = 75;
+	indicatorLiquid.x = 335;
+	indicatorLiquid.y = 445;
+	indicatorLiquid.rotation = -47;
+	stage.addChild(indicatorLiquid);
+
 	stage.addChild(background);
 	stage.addChild(setup);
 	stage.addChild(buretStop);
@@ -80,16 +125,26 @@ function initListeners() {
 		stage.addChild(buretStop);
 		stage.removeChild(this);
 		buretDispensing = false;
+		stage.removeChild(liquidFalling);
 	});
 	eyedrop.on("click", function(event) {
 		stage.addChild(eyedropSqueezed);
 		stage.removeChild(this);
+
+		dispenseIndicator();
 
 		setTimeout(function() {
 			stage.addChild(eyedrop);
 			stage.removeChild(eyedropSqueezed);
 		}, 500);
 	});
+}
+
+function dispenseIndicator() {
+	createjs.Tween.get(indicatorLiquid).to({x: indicatorLiquid.x + 5, y: indicatorLiquid.y + 5, scaleY: indicatorLiquid.scaleY - 0.1}, 500)
+		.wait(400).call(function() {
+			flaskLiquid.y--;
+		});
 }
 
 //////////////////////// PRELOADJS FUNCTIONS
