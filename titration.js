@@ -125,6 +125,10 @@ function endGame() {
 		.call(function() { stage.removeChild(liquidFalling); });
 	stage.addChild(buretStop);
 	stage.removeChild(buretGo);
+	stage.addChild(completeScreen);
+	completeScreen.on("click", function() {
+		location.reload();
+	})
 }
 
 function initGraphics() {
@@ -243,6 +247,7 @@ var setup, buretGo, buretStop, eyedrop, eyedropSqueezed;
 var background;
 var indicatorDrop;
 var indicatorAlert;
+var completeScreen;
 
 function setupManifest() {
  	manifest = [
@@ -281,6 +286,10 @@ function setupManifest() {
  		{
  			src: "images/indicator_alert.png",
  			id: "indicator_alert"
+ 		},
+ 		{
+ 			src: "images/complete.png",
+ 			id: "complete"
  		}
  	];
 }
@@ -315,6 +324,8 @@ function handleFileLoad(event) {
    		indicatorDrop = new createjs.Bitmap(event.result);
    	} else if (event.item.id == "indicator_alert") {
    		indicatorAlert = new createjs.Bitmap(event.result);
+   	} else if (event.item.id == "complete") {
+   		completeScreen = new createjs.Bitmap(event.result);
    	}
 }
 
