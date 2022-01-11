@@ -1,7 +1,7 @@
 /**
- * BCLearningNetwork.com
+ * wcln.ca
  * Titration
- * @author Colin Bernard (colinjbernard@hotmail.com)
+ * @author Colin Perepelken (colin@perepelken.ca)
  * June 2017
  */
 
