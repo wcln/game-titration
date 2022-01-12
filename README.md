@@ -1,2 +1,2 @@
 # Titration Media
-https://wcln.ca/local/lor/index.php/resources/view/13
+https://wcln.ca/_LOR/games/titration/index.html
